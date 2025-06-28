@@ -1,24 +1,26 @@
 <?php
-include 'db.php';
+require 'db.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $u = $_POST['username'];
+    $p = $_POST['password'];
 
-    $res = $pdo->query("SELECT * FROM users WHERE username='$username' AND password='$password'");
-    if ($res->rowCount() > 0) {
-        setcookie("user", $username, time()+3600);
+    $sql = "SELECT * FROM users WHERE username = '$u' AND password = '$p'";
+    $result = $conn->query($sql);
+
+    if ($row = $result->fetch_assoc()) {
+        setcookie("user", $row['username'], time() + 3600, "/");
         header("Location: welcome.php");
         exit;
     } else {
-        echo "Неверные данные";
+        echo "Неверный логин или пароль";
     }
 }
 ?>
 
-<form method="POST">
-    Login: <input name="username"><br>
-    Password: <input name="password" type="password"><br>
-    <button type="submit">Sign in</button>
+<form method="post">
+  <input name="username" placeholder="Логин">
+  <input name="password" type="password" placeholder="Пароль">
+  <button>Войти</button>
 </form>

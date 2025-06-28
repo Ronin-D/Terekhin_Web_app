@@ -1,17 +1,17 @@
 <?php
-include 'db.php';
-
+require 'db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $pdo->query("INSERT INTO users (username, password) VALUES ('$username', '$password')");
-    echo "Пользователь зарегистрирован!";
+    $u = $_POST['username'];
+    $p = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+    $stmt->bind_param("ss", $u, $p);
+    $stmt->execute();
+    echo "Пользователь зарегистрирован";
+    exit;
 }
 ?>
-
-<form method="POST">
-    Логин: <input name="username"><br>
-    Пароль: <input name="password" type="password"><br>
-    <button type="submit">Зарегистрироваться</button>
+<form method="post">
+  <input name="username" placeholder="Логин">
+  <input name="password" type="password" placeholder="Пароль">
+  <button>Зарегистрироваться</button>
 </form>
